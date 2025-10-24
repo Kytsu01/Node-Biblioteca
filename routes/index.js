@@ -10,13 +10,19 @@ router.get('/login', function(req, res, next) {
   res.send('Aqui vai aparecer um forum - aguarde...');
 });
 
-router.post('/login', function(req, res, next) {
+router.post('/login', async function(req, res, next) {
   const {usuario, senha} = req.body;
 
-  if(usuario == "nicolas@gmail.com" && senha === "123456") {
-    res.send("Logado com sucesso!");
+  console.log("Dados recebido do usuario: ", usuario, senha);
+
+  const user = await global.banco.getUsuario(usuario, senha);
+
+  console.log("Dados recebido do DB ", user);
+
+  if(user && user.length > 0) {
+    res.redirect('/dashboard');
   } else {
-    res.render('index', {titulo : "Sistema de Biblioteca", erro : "Usuario/Senha invalidos!"});
+    res.render('index', {titulo : "Sistema de Biblioteca", erro : "Usuario/Senha Invalido"});
   }
 });
 
@@ -24,4 +30,10 @@ router.get('/listagem', function(req, res, next) {
   res.send('Aqui vai aparecer a lista de livros - aguarde...');
 });
 
+router.get('/dashboard', function(req, res, next) {
+  res.render('dashboard');
+});
+
 module.exports = router;
+
+
